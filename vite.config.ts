@@ -1,25 +1,21 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import type { UserConfig } from 'vite';
-import { Server } from 'socket.io';
+import type { UserConfig, ViteDevServer } from 'vite';
+import { configureSocket } from './server/socket.js';
 
 const webSocketServer = {
 	name: 'webSocketServer',
-	configureServer(server) {
-		const io = new Server(server.httpServer);
-		io.on('connection', (socket) => {
-			socket.emit('eventFromServer', 'Hello, World 👋');
-			socket.on('eventFromClient', (msg) => {
-				console.log('message from the client: ' + msg);
-			});
-		});
+	configureServer(server: ViteDevServer) {
+		if (server.httpServer) {
+			configureSocket(server.httpServer);
+		}
 	}
 };
 
 const config: UserConfig = {
 	plugins: [sveltekit(), webSocketServer],
-  ssr: {
-    noExternal: ['three']
-  }
+	ssr: {
+		noExternal: ['three']
+	}
 };
 
 export default config;

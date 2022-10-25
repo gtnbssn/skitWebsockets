@@ -1,9 +1,7 @@
-// THIS IS WHAT IS USED IN PRODUCTION
-// IT NEEDS TO BE KEPT IN SYNC WITH WHAT IS IN THE VITE CONFIGURATION MANUALLY
-
 import express from 'express';
 import { createServer } from 'http';
-import { Server } from 'socket.io';
+import { networkInterfaces } from 'os';
+import { configureSocket } from './socket.js'
 
 import { handler } from '../build/handler.js';
 
@@ -11,17 +9,24 @@ const port = 3000;
 const app = express();
 const server = createServer(app);
 
-const io = new Server(server);
-
-io.on('connection', (socket) => {
-	socket.emit('eventFromServer', 'Hello, World 👋');
-	socket.on('eventFromClient', (msg) => {
-		console.log('message from the client: ' + msg);
-	});
-});
+configureSocket(server);
 
 // SvelteKit should handle everything else using Express middleware
 // https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
 app.use(handler);
+
+// output the local address
+const localIP =	Object.values(networkInterfaces()).reduce(
+		(r, list) =>
+			r.concat(
+				list.reduce(
+					(rr, i) => rr.concat((i.family === 'IPv4' && !i.internal && i.address) || []),
+					[]
+				)
+			),
+		[]
+	)[0];
+
+console.log('access the app on the local network at: http://' + localIP + ':' + port);
 
 server.listen(port, '0.0.0.0');
