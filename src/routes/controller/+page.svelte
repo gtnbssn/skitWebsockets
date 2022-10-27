@@ -8,6 +8,5 @@
     console.log(message)
   })
 </script>
-<h1 class="text-5xl">Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h1 class="text-5xl mx-auto mb-10">BIG RED BUTTON</h1>
 <Button socket={socket} buttonText="talk to me" message="hellooo"/>

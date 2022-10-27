@@ -1,3 +1,9 @@
+<script lang="ts" context="module">
+  import { io } from 'socket.io-client'
+  import Button from '$lib/components/Button.svelte'
+
+  const socket = io()
+</script>
 <script>
   import { CircleBufferGeometry, MeshStandardMaterial, BoxBufferGeometry, DoubleSide } from 'three'
   import { DEG2RAD } from 'three/src/math/MathUtils'
@@ -14,6 +20,17 @@
   import { spring } from 'svelte/motion'
 
   const scale = spring(1)
+
+  let currentColor = "#0000FF";
+
+  socket.on('eventFromServer', (message) => {
+    console.log(message)
+    if (currentColor == "#0000FF") {
+      currentColor = "#FF0000";
+    } else {
+      currentColor = "#0000FF";
+    }
+  })
 </script>
 
 <div>
@@ -40,7 +57,7 @@
         position={{ y: 0.5 }}
         castShadow
         geometry={new BoxBufferGeometry(1, 1, 1)}
-        material={new MeshStandardMaterial({ color: '#333333' })}
+        material={new MeshStandardMaterial({ color: currentColor })}
       />
     </Group>
 
@@ -56,6 +73,9 @@
 
 <style>
   div {
+    position: fixed;
+    left: 0;
+    top: 0;
     height: 100%;
     width: 100%;
   }
