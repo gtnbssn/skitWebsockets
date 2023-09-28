@@ -46,6 +46,7 @@
 		QRCode.toCanvas(
 			document.getElementById('qrcode'),
 			`http://${data.localIP}:5173/controller`, //FIXME:  the port number is different in production
+			{ errorCorrectionLevel: 'H' },
 			function (error) {
 				if (error) console.error(error);
 				console.log('success!');
@@ -106,9 +107,8 @@
 	}
 	canvas {
 		position: fixed;
-		top: 10;
-		left: 10;
-		height: 300px;
-		width: 300px;
+		top: 20px;
+		left: 20px;
+		opacity: 0.6;
 	}
 </style>
