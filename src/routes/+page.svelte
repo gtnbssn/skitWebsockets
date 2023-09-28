@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
 	import type { PageData } from './$types';
+	import QRCode from 'qrcode';
 	import { io } from 'socket.io-client';
 
 	const socket = io();
@@ -23,6 +24,7 @@
 	import { Vector2 } from 'three';
 	import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 	import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass';
+	import { onMount } from 'svelte';
 
 	export let data;
 
@@ -39,6 +41,16 @@
 		} else {
 			currentColor = '#0000FF';
 		}
+	});
+	onMount(async () => {
+		QRCode.toCanvas(
+			document.getElementById('qrcode'),
+			`http://${data.localIP}:5173/controller`, //FIXME:  the port number is different in production
+			function (error) {
+				if (error) console.error(error);
+				console.log('success!');
+			}
+		);
 	});
 </script>
 
@@ -82,6 +94,8 @@
 	</Canvas>
 </div>
 
+<canvas id="qrcode" />
+
 <style>
 	div {
 		position: fixed;
@@ -89,5 +103,12 @@
 		top: 0;
 		height: 100%;
 		width: 100%;
+	}
+	canvas {
+		position: fixed;
+		top: 10;
+		left: 10;
+		height: 300px;
+		width: 300px;
 	}
 </style>
